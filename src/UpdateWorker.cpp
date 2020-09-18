@@ -16,6 +16,7 @@ UpdateWorker::UpdateWorker(StopwatchWidget *stopwatch, QObject *parent)
 void UpdateWorker::start()
 {
     static const QChar fill('0');
+    static const QString timeFormat("%1s:%2");
 
     // Account for different interfaces for starting and restarting
     if (!this->timer_.isValid())
@@ -23,16 +24,22 @@ void UpdateWorker::start()
     else
         this->timer_.restart();
 
-    while (!QThread::currentThread()->isInterruptionRequested())
+    for (;; QThread::currentThread()->usleep(1000))
     {
         const qint64 millisElapsed = this->timer_.elapsed();
         const qint64 secondsElapsed = millisElapsed / 1000;
         const qint64 startedMillis = millisElapsed % 1000;
 
-        const auto timeString = QString("%1s:%2")
-                                    .arg(secondsElapsed, 2, 10, fill)
+        const auto timeString = timeFormat.arg(secondsElapsed, 2, 10, fill)
                                     .arg(startedMillis, 3, 10, fill);
         this->stopwatch_->ui_.timeLabel->setText(timeString);
+
+        // Only check approx. once per second to keep overhead low
+        if (startedMillis == 0 &&
+            QThread::currentThread()->isInterruptionRequested())
+        {
+            break;
+        }
     }
 
     QThread::currentThread()->quit();
