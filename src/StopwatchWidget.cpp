@@ -14,10 +14,11 @@ StopwatchWidget::StopwatchWidget(QWidget *parent)
     this->worker_->moveToThread(&this->updateThread_);
     this->updateThread_.start();
 
-    // TODO: Set approriate style
     this->ui_.timeLabel = new QLabel(this);
+    this->ui_.timeLabel->setFont(QFont("Liberation Mono", 48, QFont::Bold));
 
     auto *layout = new QVBoxLayout;
+    layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(this->ui_.timeLabel);
     this->setLayout(layout);
 
