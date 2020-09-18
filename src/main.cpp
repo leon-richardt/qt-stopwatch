@@ -1,9 +1,14 @@
 #include <QApplication>
-#include <QDebug>
+
+#include "StopwatchWidget.hpp"
 
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
 
-    qDebug() << "build test";
+    stopwatch::StopwatchWidget stopwatch;
+    stopwatch.start();
+    stopwatch.show();
+
+    return app.exec();
 }
