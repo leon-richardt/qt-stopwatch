@@ -12,7 +12,6 @@ StopwatchWidget::StopwatchWidget(QWidget *parent)
 {
     this->worker_ = new UpdateWorker(this);
     this->worker_->moveToThread(&this->updateThread_);
-    this->updateThread_.start();
 
     this->ui_.timeLabel = new QLabel(this);
     this->ui_.timeLabel->setFont(QFont("Liberation Mono", 48, QFont::Bold));
@@ -33,14 +32,18 @@ StopwatchWidget::~StopwatchWidget()
 
 void StopwatchWidget::start()
 {
+    this->updateThread_.start();
     this->running_ = true;
     emit startRequested();
 }
 
 void StopwatchWidget::stop()
 {
-    this->running_ = false;
-    this->updateThread_.requestInterruption();
+    if (this->running_)
+    {
+        this->running_ = false;
+        this->updateThread_.requestInterruption();
+    }
 }
 
 bool StopwatchWidget::running() const
