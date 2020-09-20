@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QLabel>
+#include <QPointer>
 #include <QThread>
 #include <QWidget>
 
@@ -24,8 +25,8 @@ signals:
     void startRequested();
 
 private:
-    QThread updateThread_;
-    UpdateWorker *worker_{};
+    QPointer<QThread> updateThread_;
+    QPointer<UpdateWorker> worker_;
 
     bool running_{};
 

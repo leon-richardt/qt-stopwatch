@@ -8,11 +8,7 @@ namespace stopwatch {
 
 StopwatchWidget::StopwatchWidget(QWidget *parent)
     : QWidget(parent)
-    , updateThread_(this)
 {
-    this->worker_ = new UpdateWorker(this);
-    this->worker_->moveToThread(&this->updateThread_);
-
     this->ui_.timeLabel = new QLabel(this);
     this->ui_.timeLabel->setFont(QFont("Liberation Mono", 48, QFont::Bold));
 
@@ -26,13 +22,30 @@ StopwatchWidget::StopwatchWidget(QWidget *parent)
 
 StopwatchWidget::~StopwatchWidget()
 {
-    this->stop();
-    this->updateThread_.wait();
+    if (this->updateThread_)
+    {
+        this->updateThread_->requestInterruption();
+        this->updateThread_->wait();
+
+        if (this->worker_)
+            this->worker_->deleteLater();
+
+        this->updateThread_->deleteLater();
+    }
 }
 
 void StopwatchWidget::start()
 {
-    this->updateThread_.start();
+    if (this->running_)
+    {
+        this->stop();
+    }
+
+    this->updateThread_ = new QThread;
+    this->worker_ = new UpdateWorker(this);
+    this->worker_->moveToThread(this->updateThread_);
+
+    this->updateThread_->start();
     this->running_ = true;
     emit startRequested();
 }
@@ -42,7 +55,12 @@ void StopwatchWidget::stop()
     if (this->running_)
     {
         this->running_ = false;
-        this->updateThread_.requestInterruption();
+        this->updateThread_->requestInterruption();
+
+        QObject::connect(this->updateThread_, &QThread::finished, this->worker_,
+                         &QObject::deleteLater);
+        QObject::connect(this->updateThread_, &QThread::finished,
+                         this->updateThread_, &QThread::deleteLater);
     }
 }
 
