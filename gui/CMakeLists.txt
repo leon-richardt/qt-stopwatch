@@ -17,14 +17,15 @@ else()
   add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
 
-find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Network REQUIRED)
 
 add_executable(stopwatch
     src/main.cpp
+    src/IpcServer.cpp
     src/StopwatchWidget.cpp
     src/UpdateWorker.cpp
 )
 
 target_compile_options(stopwatch PUBLIC "$<$<CONFIG:RELEASE>:-O3>")
 
-target_link_libraries(stopwatch Qt5::Core Qt5::Widgets)
+target_link_libraries(stopwatch Qt5::Core Qt5::Widgets Qt5::Network)
