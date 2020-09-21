@@ -14,7 +14,7 @@ class IpcServer : public QObject
     Q_OBJECT
 
 public:
-    static constexpr char const *SERVER_NAME = "stopwatch11";
+    static constexpr char const *SERVER_NAME = "stopwatch";
 
     IpcServer(StopwatchWidget *stopwatch, QObject *parent = nullptr);
     ~IpcServer();

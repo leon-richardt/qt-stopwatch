@@ -3,7 +3,7 @@
 enum class Message : char { STOP = 0, START = 1 };
 enum class Response : char { OK = 0, ERROR = 1 };
 
-constexpr char const *SERVER_NAME = "stopwatch11";
+constexpr char const *SERVER_NAME = "stopwatch";
 
 int main(int argc, char **argv)
 {
