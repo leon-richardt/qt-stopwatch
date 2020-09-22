@@ -27,5 +27,6 @@ add_executable(stopwatch
 )
 
 target_compile_options(stopwatch PUBLIC "$<$<CONFIG:RELEASE>:-O3>")
+target_compile_options(stopwatch PUBLIC "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb>")
 
 target_link_libraries(stopwatch Qt5::Core Qt5::Widgets Qt5::Network)
